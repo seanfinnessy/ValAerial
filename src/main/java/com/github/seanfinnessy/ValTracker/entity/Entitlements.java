@@ -5,10 +5,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Entitlements {
     private String accessToken;
-    private String jsonWebToken;
-    private String loggedInPlayerUuid;
 
-    public Entitlements() {};
+    private String subject; // player uuid
+    private String token; // used as entitlement in requests
 
     public String getAccessToken() {
         return accessToken;
@@ -18,28 +17,28 @@ public class Entitlements {
         this.accessToken = accessToken;
     }
 
-    public String getJsonWebToken() {
-        return jsonWebToken;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setJsonWebToken(String jsonWebToken) {
-        this.jsonWebToken = jsonWebToken;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
-    public String getLoggedInPlayerUuid() {
-        return loggedInPlayerUuid;
+    public String getToken() {
+        return token;
     }
 
-    public void setLoggedInPlayerUuid(String loggedInPlayerUuid) {
-        this.loggedInPlayerUuid = loggedInPlayerUuid;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override
     public String toString() {
-        return "EntitlementsService{" +
+        return "Entitlements{" +
                 "accessToken='" + accessToken + '\'' +
-                ", jsonWebToken='" + jsonWebToken + '\'' +
-                ", loggedInPlayerUuid='" + loggedInPlayerUuid + '\'' +
+                ", subject='" + subject + '\'' +
+                ", token='" + token + '\'' +
                 '}';
     }
 }

@@ -1,7 +1,6 @@
 package com.github.seanfinnessy.ValTracker.service;
 
 import com.github.seanfinnessy.ValTracker.entity.Lockfile;
-import com.github.seanfinnessy.ValTracker.service.EntitlementsService;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
@@ -44,6 +43,7 @@ public class HttpUtilityService {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustAllCerts, new SecureRandom());
 
+
             HttpRequest getRequest = HttpRequest.newBuilder()
                     .uri(new URI(url))
                     .header("Authorization", lockfile.getEncodedPassword())
@@ -56,6 +56,7 @@ public class HttpUtilityService {
                     .sslContext(sslContext)
                     .build()
                     .send(getRequest, HttpResponse.BodyHandlers.ofString());
+
 
         } catch (NoSuchAlgorithmException | URISyntaxException | IOException | InterruptedException |
                  KeyManagementException e) {

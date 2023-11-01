@@ -1,5 +1,6 @@
 package com.github.seanfinnessy.ValTracker.controller;
 
+import com.github.seanfinnessy.ValTracker.entity.Entitlements;
 import com.github.seanfinnessy.ValTracker.entity.Lockfile;
 import com.github.seanfinnessy.ValTracker.exception.ValorantNotRunningException;
 import com.github.seanfinnessy.ValTracker.service.EntitlementsService;
@@ -15,27 +16,31 @@ public class TrackerController {
 
     private final LockfileService lockfileService;
     private final Lockfile lockfile;
+    private final Entitlements entitlements;
     private final EntitlementsService entitlementsService;
 
     @Autowired
     public TrackerController(
             LockfileService theLockfileService,
             Lockfile theLockfile,
+            Entitlements theEntitlements,
             EntitlementsService theEntitlementsService) {
         lockfileService = theLockfileService;
         lockfile = theLockfile;
+        entitlements = theEntitlements;
         entitlementsService = theEntitlementsService;
     }
 
     @GetMapping("/init")
     public String initiateApplication() {
         // get lockfile contents
-        if (!lockfileService.getLockfileContents(lockfile)) {
+        if (!lockfileService.getLockfileContents()) {
             throw new ValorantNotRunningException("Failed retrieving lockfile data. Please make sure Valorant is running.");
         }
 
         // get entitlements
-        if (!entitlementsService.getEntitlements(lockfile)) {
+        if (!entitlementsService.getEntitlements()) {
+            System.out.println(entitlements);
             throw new ValorantNotRunningException("Failed retrieving entitlements. Please make sure Valorant is running.");
         }
 

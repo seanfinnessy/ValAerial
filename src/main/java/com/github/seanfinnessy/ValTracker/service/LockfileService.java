@@ -1,6 +1,7 @@
 package com.github.seanfinnessy.ValTracker.service;
 
 import com.github.seanfinnessy.ValTracker.entity.Lockfile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,16 @@ public class LockfileService {
     @Value("${lockfilePath}")
     private String lockfilePath;
 
+    private final Lockfile lockfile;
+
     Logger logger = Logger.getLogger(EntitlementsService.class.getName());
 
-    public LockfileService() {};
+    @Autowired
+    public LockfileService(Lockfile theLockfile) {
+        lockfile = theLockfile;
+    };
 
-    public boolean getLockfileContents(Lockfile lockfile) {
+    public boolean getLockfileContents() {
         String fullLockfilePath = System.getenv("LOCALAPPDATA") + lockfilePath;
 
         try {
