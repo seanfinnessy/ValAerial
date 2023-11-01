@@ -1,6 +1,5 @@
 package com.github.seanfinnessy.ValTracker.controller;
 
-import com.github.seanfinnessy.ValTracker.entity.Entitlements;
 import com.github.seanfinnessy.ValTracker.entity.Lockfile;
 import com.github.seanfinnessy.ValTracker.exception.ValorantNotRunningException;
 import com.github.seanfinnessy.ValTracker.service.EntitlementsService;
@@ -22,7 +21,6 @@ public class TrackerController {
     public TrackerController(
             LockfileService theLockfileService,
             Lockfile theLockfile,
-            Entitlements theEntitlements,
             EntitlementsService theEntitlementsService) {
         lockfileService = theLockfileService;
         lockfile = theLockfile;
