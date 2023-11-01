@@ -40,7 +40,7 @@ public class EntitlementsService {
         entitlements.setToken(tempEntitlements.getToken());
 
 //        if (response != null) {
-//            Entitlements tempEntitlements = gson.fromJson(jsonObject, Entitlements.class);
+//            Entitlements tempEntitlements = gson.fromJson(response.body(), Entitlements.class);
 //            entitlements.setAccessToken(tempEntitlements.getAccessToken());
 //            entitlements.setSubject(tempEntitlements.getSubject());
 //            entitlements.setToken(tempEntitlements.getToken());
