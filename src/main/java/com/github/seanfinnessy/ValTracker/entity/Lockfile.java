@@ -37,7 +37,7 @@ public class Lockfile {
 
     public void setEncodedPassword(String encodedPassword) {
         String riotPrefixPassword = "riot:" + encodedPassword;
-        this.encodedPassword = Base64.getEncoder().encodeToString(riotPrefixPassword.getBytes());
+        this.encodedPassword = "Basic " + Base64.getEncoder().encodeToString(riotPrefixPassword.getBytes());
     }
 
     public String getPort() {

@@ -3,8 +3,6 @@ package com.github.seanfinnessy.ValTracker.service;
 import com.github.seanfinnessy.ValTracker.entity.Entitlements;
 import com.github.seanfinnessy.ValTracker.entity.Lockfile;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,24 +25,18 @@ public class EntitlementsService {
         // generate url for entitlements
         String port = lockfile.getPort();
         String entitlementsUrl = "https://127.0.0.1:" + port + "/entitlements/v1/token";
-
         HttpResponse<String> response = httpUtilityService.httpGetRequest(entitlementsUrl, lockfile);
-
         Gson gson = new Gson();
-        String jsonString = "{'accessToken': 'asdasdasd', 'entitlements': '[]','issuer': 'asdasdasd', subject: '123', 'token': 'token'}";
-        JsonObject jsonObject = (JsonObject) JsonParser.parseString(jsonString);
 
-        Entitlements tempEntitlements = gson.fromJson(jsonObject, Entitlements.class);
-        entitlements.setAccessToken(tempEntitlements.getAccessToken());
-        entitlements.setSubject(tempEntitlements.getSubject());
-        entitlements.setToken(tempEntitlements.getToken());
+//        String jsonString = "{'accessToken': 'asdasdasd', 'entitlements': '[]','issuer': 'asdasdasd', subject: '123', 'token': 'token'}";
+//        JsonObject jsonObject = (JsonObject) JsonParser.parseString(jsonString);
 
-//        if (response != null) {
-//            Entitlements tempEntitlements = gson.fromJson(response.body(), Entitlements.class);
-//            entitlements.setAccessToken(tempEntitlements.getAccessToken());
-//            entitlements.setSubject(tempEntitlements.getSubject());
-//            entitlements.setToken(tempEntitlements.getToken());
-//        }
+        if (response != null) {
+            Entitlements tempEntitlements = gson.fromJson(response.body(), Entitlements.class);
+            entitlements.setAccessToken(tempEntitlements.getAccessToken());
+            entitlements.setSubject(tempEntitlements.getSubject());
+            entitlements.setToken(tempEntitlements.getToken());
+        }
 
         return response != null;
     }

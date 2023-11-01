@@ -40,10 +40,9 @@ public class TrackerController {
 
         // get entitlements
         if (!entitlementsService.getEntitlements()) {
-            System.out.println(entitlements);
             throw new ValorantNotRunningException("Failed retrieving entitlements. Please make sure Valorant is running.");
         }
 
-        return lockfile.toString();
+        return entitlements.toString();
     }
 }
