@@ -1,5 +1,6 @@
 package com.github.seanfinnessy.ValTracker.service;
 
+import com.github.seanfinnessy.ValTracker.entity.Entitlements;
 import com.github.seanfinnessy.ValTracker.entity.Lockfile;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class HttpUtilityService {
             }
     };
 
-    public HttpResponse<String> httpGetRequest(String url, Lockfile lockfile) {
+    public HttpResponse<String> httpGetLocalRequest(String url, Lockfile lockfile) {
         // code for ignoring the riot ssl cert, Riot docs mentioned to ignore it
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -65,5 +66,32 @@ public class HttpUtilityService {
         }
     }
 
+    public HttpResponse<String> httpGetRiotRequest(String url, Entitlements entitlements) {
+        // code for ignoring the riot ssl cert, Riot docs mentioned to ignore it
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
 
+
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .uri(new URI(url))
+                    .header("Authorization", "Bearer "+entitlements.getAccessToken())
+                    .header("X-Riot-Entitlements-JWT", entitlements.getToken())
+                    .timeout(Duration.ofSeconds(10))
+                    .GET()
+                    .build();
+
+            return HttpClient
+                    .newBuilder()
+                    .sslContext(sslContext)
+                    .build()
+                    .send(getRequest, HttpResponse.BodyHandlers.ofString());
+
+
+        } catch (NoSuchAlgorithmException | URISyntaxException | IOException | InterruptedException |
+                 KeyManagementException e) {
+            logger.warning("Exception occurred while connecting to: " + url + ". Root cause: " + e.getCause());
+            return null;
+        }
+    }
 }

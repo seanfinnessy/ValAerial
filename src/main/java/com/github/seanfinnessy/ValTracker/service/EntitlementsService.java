@@ -25,7 +25,7 @@ public class EntitlementsService {
         // generate url for entitlements
         String port = lockfile.getPort();
         String entitlementsUrl = "https://127.0.0.1:" + port + "/entitlements/v1/token";
-        HttpResponse<String> response = httpUtilityService.httpGetRequest(entitlementsUrl, lockfile);
+        HttpResponse<String> response = httpUtilityService.httpGetLocalRequest(entitlementsUrl, lockfile);
         Gson gson = new Gson();
 
 //        String jsonString = "{'accessToken': 'asdasdasd', 'entitlements': '[]','issuer': 'asdasdasd', subject: '123', 'token': 'token'}";
@@ -36,6 +36,7 @@ public class EntitlementsService {
             entitlements.setAccessToken(tempEntitlements.getAccessToken());
             entitlements.setSubject(tempEntitlements.getSubject());
             entitlements.setToken(tempEntitlements.getToken());
+            System.out.println(entitlements);
         }
 
         return response != null;
