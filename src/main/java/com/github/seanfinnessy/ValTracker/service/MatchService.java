@@ -47,14 +47,14 @@ public class MatchService {
             matchHistory.setTotal(tempMatchHistory.getTotal());
             matchHistory.setHistory(tempMatchHistory.getHistory());
             for (MatchHistory.Match match: matchHistory.getHistory()) {
-                System.out.println(getMatchResults(match));
+                getMatchResults(match);
             }
 
         }
         return response != null;
     }
 
-    private MatchHistory.Match getMatchResults(MatchHistory.Match match) {
+    private void getMatchResults(MatchHistory.Match match) {
         // generate url for match specifics
         String shard = clientRegion.getRegion();
         String matchId = match.getMatchID();
@@ -65,6 +65,8 @@ public class MatchService {
         if (response != null) {
             MatchStats tempMatchStats = gson.fromJson(response.body(), MatchStats.class);
             matchStats.setMatchInfo(tempMatchStats.getMatchInfo());
+            matchStats.setPlayers(tempMatchStats.getPlayers());
+            System.out.println(matchStats);
         }
     }
 }

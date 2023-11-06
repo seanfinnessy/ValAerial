@@ -73,4 +73,18 @@ public class Player {
     public void setAccountLevel(int accountLevel) {
         this.accountLevel = accountLevel;
     }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "subject='" + subject + '\'' +
+                ", gameName='" + gameName + '\'' +
+                ", tagLine='" + tagLine + '\'' +
+                ", teamId='" + teamId + '\'' +
+                ", competitiveTier='" + competitiveTier + '\'' +
+                ", playerCard='" + playerCard + '\'' +
+                ", playerTitle='" + playerTitle + '\'' +
+                ", accountLevel=" + accountLevel +
+                '}';
+    }
 }

@@ -7,6 +7,15 @@ import java.util.ArrayList;
 @Component
 public class MatchStats {
     private MatchInfo matchInfo;
+    private ArrayList<Player> players;
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
 
     public MatchInfo getMatchInfo() {
         return matchInfo;
@@ -22,11 +31,10 @@ public class MatchStats {
         private String gameLengthMillis;
         private String gameStartMillis;
         private boolean isCompleted;
-        private String queueId;
+        private String queueID;
         private boolean isRanked;
         private String seasonId;
         private String completionState;
-        private ArrayList<Player> players;
 
         public String getMatchId() {
             return matchId;
@@ -68,12 +76,12 @@ public class MatchStats {
             isCompleted = completed;
         }
 
-        public String getQueueId() {
-            return queueId;
+        public String getQueueID() {
+            return queueID;
         }
 
-        public void setQueueId(String queueId) {
-            this.queueId = queueId;
+        public void setQueueID(String queueID) {
+            this.queueID = queueID;
         }
 
         public boolean isRanked() {
@@ -100,12 +108,27 @@ public class MatchStats {
             this.completionState = completionState;
         }
 
-        public ArrayList<Player> getPlayers() {
-            return players;
+        @Override
+        public String toString() {
+            return "MatchInfo{" +
+                    "matchId='" + matchId + '\'' +
+                    ", mapId='" + mapId + '\'' +
+                    ", gameLengthMillis='" + gameLengthMillis + '\'' +
+                    ", gameStartMillis='" + gameStartMillis + '\'' +
+                    ", isCompleted=" + isCompleted +
+                    ", queueId='" + queueID + '\'' +
+                    ", isRanked=" + isRanked +
+                    ", seasonId='" + seasonId + '\'' +
+                    ", completionState='" + completionState + '\'' +
+                    '}';
         }
+    }
 
-        public void setPlayers(ArrayList<Player> players) {
-            this.players = players;
-        }
+    @Override
+    public String toString() {
+        return "MatchStats{" +
+                "matchInfo=" + matchInfo +
+                ", players=" + players +
+                '}';
     }
 }
