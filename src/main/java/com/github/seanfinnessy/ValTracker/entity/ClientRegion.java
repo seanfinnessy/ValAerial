@@ -9,6 +9,7 @@ public class ClientRegion {
     private String webLanguage;
     private String webRegion;
 
+
     public String getLocale() {
         return locale;
     }

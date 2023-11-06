@@ -46,6 +46,7 @@ public class LockfileService {
             lockfile.setPassword(password);
             lockfile.setEncodedPassword(password);
             lockfile.setProtocol(protocol);
+            System.out.println(lockfile);
 
             reader.close();
             return true;

@@ -34,7 +34,7 @@ public class MatchHistory {
         this.history = history;
     }
 
-    private static class Match {
+    public static class Match {
         private String matchID;
         private long gameStartTime;
         private String queueID;
