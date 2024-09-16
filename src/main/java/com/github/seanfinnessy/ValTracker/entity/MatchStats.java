@@ -28,12 +28,9 @@ public class MatchStats {
     public static class MatchInfo {
         private String matchId;
         private String mapId;
-        private String gameLengthMillis;
-        private String gameStartMillis;
         private boolean isCompleted;
         private String queueID;
         private boolean isRanked;
-        private String seasonId;
         private String completionState;
 
         public String getMatchId() {
@@ -50,22 +47,6 @@ public class MatchStats {
 
         public void setMapId(String mapId) {
             this.mapId = mapId;
-        }
-
-        public String getGameLengthMillis() {
-            return gameLengthMillis;
-        }
-
-        public void setGameLengthMillis(String gameLengthMillis) {
-            this.gameLengthMillis = gameLengthMillis;
-        }
-
-        public String getGameStartMillis() {
-            return gameStartMillis;
-        }
-
-        public void setGameStartMillis(String gameStartMillis) {
-            this.gameStartMillis = gameStartMillis;
         }
 
         public boolean isCompleted() {
@@ -92,14 +73,6 @@ public class MatchStats {
             isRanked = ranked;
         }
 
-        public String getSeasonId() {
-            return seasonId;
-        }
-
-        public void setSeasonId(String seasonId) {
-            this.seasonId = seasonId;
-        }
-
         public String getCompletionState() {
             return completionState;
         }
@@ -113,12 +86,9 @@ public class MatchStats {
             return "MatchInfo{" +
                     "matchId='" + matchId + '\'' +
                     ", mapId='" + mapId + '\'' +
-                    ", gameLengthMillis='" + gameLengthMillis + '\'' +
-                    ", gameStartMillis='" + gameStartMillis + '\'' +
                     ", isCompleted=" + isCompleted +
-                    ", queueId='" + queueID + '\'' +
+                    ", queueID='" + queueID + '\'' +
                     ", isRanked=" + isRanked +
-                    ", seasonId='" + seasonId + '\'' +
                     ", completionState='" + completionState + '\'' +
                     '}';
         }

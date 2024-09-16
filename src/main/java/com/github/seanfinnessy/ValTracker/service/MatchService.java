@@ -1,9 +1,6 @@
 package com.github.seanfinnessy.ValTracker.service;
 
-import com.github.seanfinnessy.ValTracker.entity.ClientRegion;
-import com.github.seanfinnessy.ValTracker.entity.Entitlements;
-import com.github.seanfinnessy.ValTracker.entity.MatchHistory;
-import com.github.seanfinnessy.ValTracker.entity.MatchStats;
+import com.github.seanfinnessy.ValTracker.entity.*;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,14 +16,16 @@ public class MatchService {
     private final ClientRegion clientRegion;
     private final MatchHistory matchHistory;
     private final MatchStats matchStats;
+    private final MMRMovement mmrMovement;
 
     @Autowired
-    public MatchService(HttpUtilityService httpUtilityService, Entitlements entitlements, ClientRegion clientRegion, MatchHistory matchHistory, MatchStats matchStats) {
+    public MatchService(HttpUtilityService httpUtilityService, Entitlements entitlements, ClientRegion clientRegion, MatchHistory matchHistory, MatchStats matchStats, MMRMovement mmrMovement) {
         this.httpUtilityService = httpUtilityService;
         this.entitlements = entitlements;
         this.clientRegion = clientRegion;
         this.matchHistory = matchHistory;
         this.matchStats = matchStats;
+        this.mmrMovement = mmrMovement;
     }
 
     public boolean getMatchHistory(int startIndex, int endIndex) {
@@ -59,14 +58,38 @@ public class MatchService {
         String shard = clientRegion.getRegion();
         String matchId = match.getMatchID();
         String matchUrl = "https://pd."+shard+".a.pvp.net/match-details/v1/matches/"+matchId;
+
+        // Create riot request
         HttpResponse<String> response = httpUtilityService.httpGetRiotRequest(matchUrl, entitlements);
         Gson gson = new GsonBuilder()
                 .create();
+
+        // Print out each individual match metadata
         if (response != null) {
             MatchStats tempMatchStats = gson.fromJson(response.body(), MatchStats.class);
             matchStats.setMatchInfo(tempMatchStats.getMatchInfo());
             matchStats.setPlayers(tempMatchStats.getPlayers());
             System.out.println(matchStats);
         }
+    }
+
+    public boolean getCompHistory(int startIndex, int endIndex) {
+        // generate url for match history
+        String shard = clientRegion.getRegion();
+        String puuid = entitlements.getSubject();
+        String queue = "competitive";
+
+        String compHistoryUrl = "https://pd."+shard+".a.pvp.net/mmr/v1/players/"+puuid+"/competitiveupdates?startIndex="+startIndex+"&endIndex="+endIndex +"&queue="+queue;
+
+        HttpResponse<String> response = httpUtilityService.httpGetRiotRequest(compHistoryUrl, entitlements);
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+                .create();
+
+        if (response!= null) {
+            MMRMovement tempMMRMovement = gson.fromJson(response.body(), MMRMovement.class);
+            mmrMovement.setMatches(tempMMRMovement.getMatches());
+        }
+        return response != null;
     }
 }
