@@ -128,13 +128,13 @@ public class MatchService {
         String currentMatchUrl = "https://glz-" + shard + "-1." + shard + ".a.pvp.net/core-game/v1/matches/" + matchId;
         HttpResponse<String> response = httpUtilityService.httpGetRiotRequest(currentMatchUrl, entitlements);
 
-//        Gson gson = new GsonBuilder()
-//                .create();
-//
-//        if (response.statusCode() == 200) {
-//            UserSession tempUserSession = gson.fromJson(response.body(), UserSession.class);
-//            userSession.setMatchId(tempUserSession.getMatchId());
-//        }
+        Gson gson = new GsonBuilder()
+                .create();
+
+        if (response.statusCode() == 200) {
+            UserSession tempUserSession = gson.fromJson(response.body(), UserSession.class);
+            userSession.setPlayers(tempUserSession.getPlayers());
+        }
         System.out.println(response.body());
     }
 }

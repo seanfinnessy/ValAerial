@@ -3,6 +3,8 @@ package com.github.seanfinnessy.ValTracker.entity;
 import com.google.gson.annotations.SerializedName;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
 public class UserSession {
     private String sessionLoopState;
@@ -12,6 +14,9 @@ public class UserSession {
     private String partySize;
     @SerializedName("MatchID")
     private String matchId;
+
+    @SerializedName("Players")
+    private ArrayList<Player> players;
 
     public String getSessionLoopState() {
         return sessionLoopState;
@@ -62,6 +67,14 @@ public class UserSession {
         this.matchId = matchId;
     }
 
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
     @Override
     public String toString() {
         return "UserSession{" +
@@ -71,6 +84,7 @@ public class UserSession {
                 ", queueId='" + queueId + '\'' +
                 ", partySize='" + partySize + '\'' +
                 ", matchId='" + matchId + '\'' +
+                ", players=" + players +
                 '}';
     }
 }
