@@ -1,9 +1,6 @@
 package com.github.seanfinnessy.ValTracker.service;
 
-import com.github.seanfinnessy.ValTracker.entity.Entitlements;
-import com.github.seanfinnessy.ValTracker.entity.Lockfile;
-import com.github.seanfinnessy.ValTracker.entity.Presences;
-import com.github.seanfinnessy.ValTracker.entity.UserSession;
+import com.github.seanfinnessy.ValTracker.entity.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,30 +19,37 @@ public class PresencesService {
     private final Lockfile lockfile;
     private final Presences presences;
     private final Entitlements entitlements;
-
     private final UserSession userSession;
+    private final MatchService matchService;
 
     Logger logger = Logger.getLogger(PresencesService.class.getName());
 
 
     @Autowired
-    public PresencesService(HttpUtilityService httpUtilityService, Lockfile lockfile, Presences presences, Entitlements entitlements, UserSession userSession) {
+    public PresencesService(HttpUtilityService httpUtilityService, Lockfile lockfile, Presences presences, Entitlements entitlements, UserSession userSession, MatchService matchService) {
         this.httpUtilityService = httpUtilityService;
         this.lockfile = lockfile;
         this.presences = presences;
         this.entitlements = entitlements;
         this.userSession = userSession;
+        this.matchService = matchService;
     }
 
     @Scheduled(fixedRate = 10000)
     public void getPresences() {
+        // check initial state
+        String initialGameState = null;
+        if (userSession.getSessionLoopState() != null) {
+            initialGameState = userSession.getSessionLoopState();
+        }
+
         // generate url for presences
         if (lockfile.getPort() != null) {
             String port = lockfile.getPort();
             String presencesUrl = "https://127.0.0.1:" + port + "/chat/v4/presences";
             HttpResponse<String> response = httpUtilityService.httpGetLocalRequest(presencesUrl, lockfile);
 
-            if (response != null) {
+            if (response.statusCode() == 200) {
                 Gson gson = new Gson();
                 Presences tempPresences = gson.fromJson(response.body(), Presences.class);
                 presences.setPresences(tempPresences.getPresences());
@@ -57,8 +61,21 @@ public class PresencesService {
                 assert usersPresence != null;
                 setUsersGameState(usersPresence);
 
+                // executes if our current session changes
+                if (!userSession.getSessionLoopState().equalsIgnoreCase(initialGameState)) {
+                    // IF INGAME, GET CURRENT MATCH ID
+                    if (userSession.getSessionLoopState().equalsIgnoreCase("INGAME")) {
+                        matchService.getCurrentMatchId();
+
+                        // IF WE GET A MATCH ID, GET MATCH DETAILS
+                        if (!userSession.getMatchId().isEmpty()) {
+                            matchService.getCurrentMatch();
+                        }
+                    }
+                }
+                System.out.println(userSession.toString());
             }
-        } else logger.info("Could not get presences...");
+        } else logger.warning("Could not get presences...");
     }
 
     private Presences.Presence getUserPresence(ArrayList<Presences.Presence> presences) {
@@ -83,19 +100,9 @@ public class PresencesService {
         // insert json into entity
         UserSession tempUserSession = gson.fromJson(jsonObject, UserSession.class);
         userSession.setSessionLoopState(tempUserSession.getSessionLoopState());
-        userSession.setPartyState(tempUserSession.getPartyState());
-        userSession.setPartyAccessibility(tempUserSession.getPartyAccessibility());
-        userSession.setLeaderboardPosition(tempUserSession.getLeaderboardPosition());
         userSession.setIsPartyOwner(tempUserSession.getIsPartyOwner());
-        userSession.setCompetitiveTier(tempUserSession.getCompetitiveTier());
-        userSession.setIdle(tempUserSession.isIdle());
-        userSession.setAccountLevel(tempUserSession.getAccountLevel());
         userSession.setQueueId(tempUserSession.getQueueId());
-        userSession.setPlayerCardId(tempUserSession.getPlayerCardId());
-        userSession.setPlayerTitleId(tempUserSession.getPlayerTitleId());
         userSession.setPartyId(tempUserSession.getPartyId());
-        userSession.setValid(tempUserSession.isValid());
-        userSession.setPartyAccessibility(tempUserSession.getPartyAccessibility());
         userSession.setPartySize(tempUserSession.getPartySize());
     }
 }

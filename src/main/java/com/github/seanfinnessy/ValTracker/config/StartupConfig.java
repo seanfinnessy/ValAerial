@@ -25,6 +25,8 @@ public class StartupConfig {
     }
 
 
+    /* This annotation is commonly used for tasks that need to happen once the bean
+    is fully initialized, but before it starts serving requests or is actively used in the application. */
     @PostConstruct
     public void init() {
         logger.info("Grabbing required contents...");

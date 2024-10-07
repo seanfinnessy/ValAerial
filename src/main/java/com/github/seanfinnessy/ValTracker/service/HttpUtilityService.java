@@ -55,11 +55,7 @@ public class HttpUtilityService {
                     .newBuilder()
                     .build()
                     .send(getRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

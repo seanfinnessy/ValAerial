@@ -34,12 +34,12 @@ public class TrackerController {
         return matchHistory.toString();
     }
 
+    // TODO: We maybe use the matchID returned from here to get kills/death/assist from that game and return.
     @GetMapping("/competitive-updates")
     public ResponseEntity<?> getCompUpdates() {
         if (!matchService.getCompHistory(0, 20)) {
             throw new ValorantNotRunningException("Could not get mmr history");
         }
-
         return ResponseEntity.ok(mmrMovement);
     }
 }
