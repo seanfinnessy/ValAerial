@@ -44,7 +44,7 @@ public enum Agents {
         return agentName;
     }
 
-    public static Agents getAgentName(String uuid) {
+    public static Agents getAgentNameWithUUID(String uuid) {
         for (Agents agent: Agents.values()) {
             if (agent.getUuid().equals(uuid)) {
                 return agent;

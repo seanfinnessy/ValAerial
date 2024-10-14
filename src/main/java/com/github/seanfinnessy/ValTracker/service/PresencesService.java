@@ -1,6 +1,9 @@
 package com.github.seanfinnessy.ValTracker.service;
 
 import com.github.seanfinnessy.ValTracker.entity.*;
+import com.github.seanfinnessy.ValTracker.responses.MatchApiResponse;
+import com.github.seanfinnessy.ValTracker.responses.MatchIdApiResponse;
+import com.github.seanfinnessy.ValTracker.responses.SeasonIdApiResponse;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,18 +24,33 @@ public class PresencesService {
     private final Entitlements entitlements;
     private final UserSession userSession;
     private final MatchService matchService;
+    private final MatchIdService matchIdService;
+    private final SeasonIdService seasonIdService;
+    private final MMRService mmrService;
 
     Logger logger = Logger.getLogger(PresencesService.class.getName());
 
 
     @Autowired
-    public PresencesService(HttpUtilityService httpUtilityService, Lockfile lockfile, Presences presences, Entitlements entitlements, UserSession userSession, MatchService matchService) {
+    public PresencesService(HttpUtilityService httpUtilityService,
+                            Lockfile lockfile,
+                            Presences presences,
+                            Entitlements entitlements,
+                            UserSession userSession,
+                            MatchService matchService,
+                            MatchIdService matchIdService,
+                            SeasonIdService seasonIdService,
+                            MMRService mmrService
+    ) {
         this.httpUtilityService = httpUtilityService;
         this.lockfile = lockfile;
         this.presences = presences;
         this.entitlements = entitlements;
         this.userSession = userSession;
         this.matchService = matchService;
+        this.matchIdService = matchIdService;
+        this.seasonIdService = seasonIdService;
+        this.mmrService = mmrService;
     }
 
     @Scheduled(fixedRate = 10000)
@@ -61,15 +79,40 @@ public class PresencesService {
                 assert usersPresence != null;
                 setUsersGameState(usersPresence);
 
+                // set current season id
+                SeasonIdApiResponse seasonIdApiResponse = seasonIdService.getSeasonId();
+                userSession.setSeasonId(seasonIdApiResponse.getCurrentSeasonId());
+
                 // executes if our current session changes
                 if (!userSession.getSessionLoopState().equalsIgnoreCase(initialGameState)) {
-                    // IF INGAME, GET CURRENT MATCH ID
-                    if (userSession.getSessionLoopState().equalsIgnoreCase("INGAME")) {
-                        matchService.getCurrentMatchId();
 
-                        // IF WE GET A MATCH ID, GET MATCH DETAILS
-                        if (!userSession.getMatchId().isEmpty()) {
-                            matchService.getCurrentMatch();
+                    switch (userSession.getSessionLoopState()) {
+                        case "INGAME" -> {
+                            MatchIdApiResponse matchIdApiResponse = matchIdService.getCurrentMatchId();
+                            // IF WE GET A MATCH ID, GET MATCH DETAILS
+                            if (matchIdApiResponse != null) {
+                                MatchApiResponse matchApiResponse = matchService.getCurrentMatch(matchIdApiResponse.getMatchId());
+                                userSession.setPlayers(matchApiResponse.getPlayers());
+                                userSession.setMatchId(matchIdApiResponse.getMatchId());
+
+                                for (Player player: userSession.getPlayers()) {
+                                    if (!player.getPlayerStats().isIncognito()) {
+                                        System.out.println(player);
+                                        String rank = mmrService.getPlayerRank(
+                                                player.getPlayerStats().getPlayerUUID(),
+                                                userSession.getSeasonId());
+                                        player.setCurrentRank(rank);
+                                    } else {
+                                        System.out.println("User has streamer mode enabled.");
+                                    }
+                                }
+                            }
+                        }
+                        case "MENUS" -> {
+                            userSession.clear();
+                        }
+                        case "PREGAME" -> {
+                            logger.info("Pregame logic");
                         }
                     }
                 }

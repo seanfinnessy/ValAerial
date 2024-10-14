@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Arrays;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.github.seanfinnessy.ValTracker")
 @EnableScheduling
 public class ValTrackerApplication {
 
